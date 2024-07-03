@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.barcode.databinding.ActivityMyRefrigeratorBinding
+import com.example.barcode.databinding.ActivitySaveBarcodeDataBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
@@ -45,8 +45,8 @@ class SaveBarcodeData : AppCompatActivity() {
         fun getProductByBarcode(@Query("BAR_CD") barcode: String): Call<ApiResponse>
     }
 
-    private val binding: ActivityMyRefrigeratorBinding by lazy {
-        ActivityMyRefrigeratorBinding.inflate(layoutInflater).also {
+    private val binding: ActivitySaveBarcodeDataBinding by lazy {
+        ActivitySaveBarcodeDataBinding.inflate(layoutInflater).also {
             setContentView(it.root)
         }
     }
