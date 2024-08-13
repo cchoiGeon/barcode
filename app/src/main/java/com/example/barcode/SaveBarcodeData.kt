@@ -1,13 +1,14 @@
 package com.example.barcode
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.barcode.databinding.ActivitySaveBarcodeDataBinding
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -17,6 +18,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 class SaveBarcodeData : AppCompatActivity() {
+
     data class ApiResponse(
         val C005: ResponseDetails
     )
@@ -40,6 +42,7 @@ class SaveBarcodeData : AppCompatActivity() {
         val BAR_CD: String, // 바코드
         val BSSH_NM: String // 회사명
     )
+
     interface ProductApiService {
         @GET("C005/json/1/5/")
         fun getProductByBarcode(@Query("BAR_CD") barcode: String): Call<ApiResponse>
@@ -53,8 +56,9 @@ class SaveBarcodeData : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val intentData = intent.getStringExtra("intentDataKey") ?: "8801062713271"
 
+        // intentData 초기화는 onCreate 내부에서만 수행
+        val intentData = intent.getStringExtra("intentDataKey").takeUnless { it.isNullOrBlank() } ?: "8801062713271"
         val db = Firebase.firestore
         if (intentData != "바코드 정보 없음") {
             val retrofit = Retrofit.Builder()
@@ -69,6 +73,7 @@ class SaveBarcodeData : AppCompatActivity() {
                         response.body()?.let { apiResponse ->
                             val product = apiResponse.C005.row.firstOrNull()
                             if (product != null) {
+                                Log.d("SaveBarcodeData", product.toString());
                                 binding.productionName.text = product.PRDLST_NM
                                 binding.productionDue.text = product.POG_DAYCNT
                                 binding.productionKind.text = product.PRDLST_DCNM
@@ -92,17 +97,16 @@ class SaveBarcodeData : AppCompatActivity() {
 
         binding.submitBtn.setOnClickListener{
             val user = Firebase.auth.currentUser
-
-            var uid = user?.uid ?: "123"
-
+            val uid = user?.uid ?: "123"
+            // 여기도 동일한 방식으로 intentData 초기화
             val data = hashMapOf(
                 "제품 이름" to binding.productionName.text.toString(),
                 "제품 소비기한" to binding.productionDue.text.toString(),
                 "제품 유형" to binding.productionKind.text.toString(),
                 "제품 유통기한" to binding.Due.text.toString()
             )
-            
-            db.collection("data").document(uid).set(data)
+
+            db.collection("data").document(uid).collection("barcode").document(intentData).set(data)
                 .addOnSuccessListener { documentReference ->
                     val intent = Intent(this, HomePage::class.java)
                     startActivity(intent)

@@ -51,7 +51,7 @@ class BarcodeScan : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "바코드가 아직 스캔되지 않았습니다", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, SaveBarcodeData::class.java)
-                intent.putExtra("intentDataKey", "intentData")
+                intent.putExtra("intentDataKey", intentData)
                 startActivity(intent)
             }
         }

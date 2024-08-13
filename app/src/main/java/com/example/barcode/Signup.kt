@@ -26,7 +26,7 @@ class Signup : AppCompatActivity() {
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
-                            val intent = Intent(this, SelectButton::class.java)
+                            val intent = Intent(this, HomePage::class.java)
                             startActivity(intent)
                         }else{
                             binding.errorCode.text = task.exception.toString()

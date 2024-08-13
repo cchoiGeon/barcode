@@ -27,22 +27,22 @@ class MainActivity : AppCompatActivity() {
         val currentUser: FirebaseUser? = auth.currentUser
         if (currentUser != null) {
             // 사용자가 이미 로그인된 경우 바로 SelectButton 액티비티로 이동
-            val intent = Intent(this, SelectButton::class.java)
+            val intent = Intent(this, HomePage::class.java)
             startActivity(intent)
             finish() // 현재 액티비티 종료
         }
 
-        binding.signupBtn.setOnClickListener {
+        binding.signupLink.setOnClickListener {
             val intent = Intent(this, Signup::class.java)
             startActivity(intent)
         }
         binding.loginBtn.setOnClickListener {
-            val email = binding.emailText.text.toString()
-            val password = binding.passwordText.text.toString()
+            val email = binding.emailValue.text.toString()
+            val password = binding.passwordValue.text.toString()
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        val intent = Intent(this, SelectButton::class.java)
+                        val intent = Intent(this, HomePage::class.java)
                         startActivity(intent)
                         finish() // 현재 액티비티 종료
                     }
